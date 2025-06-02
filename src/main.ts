@@ -7,6 +7,8 @@ async function bootstrap() {
   // Habilita CORS para todas as origens (dev)
   app.enableCors();
 
-  await app.listen(3000);
+  const port = process.env.PORT || 3000;  // Usa a porta do Render, ou 3000 localmente
+  await app.listen(port);
+  console.log(`Servidor rodando na porta ${port}`);
 }
 bootstrap();
