@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contador de Carros na Garagem</title>
+    <style>
+        /* CSS Resumido para Estilo */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+
+        .container {
+            text-align: center;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .count-display {
+            font-size: 48px;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Garagem VIP</h1>
+        <div id="count" class="count-display">0</div>
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+      // Função para atualizar o contador de carros
+      function atualizarContagem() {
+          fetch('https://obluda.pythonanywhere.com/api/carros_na_garagem/A/')
+              .then(response => response.json())
+              .then(data => {
+                  document.getElementById('count').innerText = data.carros_na_garagem;
+              })
+              .catch(error => {
+                  console.error('Erro ao obter contagem:', error);
+              });
+      }
+      // Atualiza a contagem de carros ao carregar a página
+      atualizarContagem();
+      // Configura o polling para atualizar a contagem automaticamente a cada 5 segundos
+      setInterval(atualizarContagem, 5000);  // 5000 milissegundos = 5 segundos
+  </script>
+
+  <br>
+  <br>
+<div class="container">
+   <h1>Garagem CIMATEC PARK</h1>
+   <div id="count2" class="count-display">0</div>
+   <div id="message" class="message"></div>
+</div>
+
+<script>
+ // Função para atualizar o contador de carros
+ function atualizarContagem() {
+     fetch('https://obluda.pythonanywhere.com/api/carros_na_garagem/B/')
+         .then(response => response.json())
+         .then(data => {
+             document.getElementById('count2').innerText = data.carros_na_garagem;
+         })
+         .catch(error => {
+             console.error('Erro ao obter contagem:', error);
+         });
+ }
+ // Atualiza a contagem de carros ao carregar a página
+ atualizarContagem();
+ // Configura o polling para atualizar a contagem automaticamente a cada 5 segundos
+ setInterval(atualizarContagem, 5000);  // 5000 milissegundos = 5 segundos
+</script>
+
+
+
+  <!-- Botão para limpar os dados -->
+<button id="limparDados" style="display: inline-block;">Limpar Dados</button>
+
+<script>
+    document.getElementById('limparDados').addEventListener('click', function () {
+        fetch('limpar_dados/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken') // Para adicionar o CSRF token
+            }
+        })
+        .then(response => response.json())
+        .then(data => alert(data.message || data.error))
+        .catch(error => console.error('Erro:', error));
+    });
+
+    // Função para obter o CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+
+
+
+
+
+
+</body>
+</html>
