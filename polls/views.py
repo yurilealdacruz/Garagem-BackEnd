@@ -49,36 +49,6 @@ def limpar_dados(request):
         CarAction.objects.all().delete()
         return JsonResponse({'message': 'Todos os registros foram apagados com sucesso!'})
     return JsonResponse({'error': 'Método não permitido.'}, status=405)
-
-
-@csrf_exempt
-@require_http_methods(["POST"])
-def ajustar_quantidade(request, garage):
-    try:
-        data = json.loads(request.body)
-        nova_quantidade = int(data.get('quantidade'))
-
-        if garage not in ['A', 'B']:
-            return JsonResponse({'error': 'Garagem inválida.'}, status=400)
-
-        entradas = CarAction.objects.filter(action='entrada', garage=garage).count()
-        saidas = CarAction.objects.filter(action='saida', garage=garage).count()
-        saldo_atual = entradas - saidas
-
-        diferenca = nova_quantidade - saldo_atual
-
-        if diferenca > 0:
-            # adicionar entradas
-            for _ in range(diferenca):
-                CarAction.objects.create(action='entrada', garage=garage)
-        elif diferenca < 0:
-            # adicionar saidas
-            for _ in range(-diferenca):
-                CarAction.objects.create(action='saida', garage=garage)
-
-        return JsonResponse({'message': f'Quantidade ajustada para {nova_quantidade} na garagem {garage}.'})
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=400)
     
 
 @csrf_exempt
@@ -102,5 +72,39 @@ def historico_por_data(request, garagem, data_str):
             for acao in acoes
         ]
         return JsonResponse({'historico': resultado})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+    
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def ajustar_quantidade(request, garage):
+    try:
+        data = json.loads(request.body)
+        nova_quantidade = int(data.get('quantidade'))
+        usuario = data.get('usuario')
+        senha = data.get('senha')
+
+        # Verificação de credenciais
+        if usuario != 'isael' or senha != 'ah1_brujas_ah1':
+            return JsonResponse({'error': 'Usuário ou senha inválidos.'}, status=403)
+
+        if garage not in ['A', 'B']:
+            return JsonResponse({'error': 'Garagem inválida.'}, status=400)
+
+        entradas = CarAction.objects.filter(action='entrada', garage=garage).count()
+        saidas = CarAction.objects.filter(action='saida', garage=garage).count()
+        saldo_atual = entradas - saidas
+
+        diferenca = nova_quantidade - saldo_atual
+
+        if diferenca > 0:
+            for _ in range(diferenca):
+                CarAction.objects.create(action='entrada', garage=garage)
+        elif diferenca < 0:
+            for _ in range(-diferenca):
+                CarAction.objects.create(action='saida', garage=garage)
+
+        return JsonResponse({'message': f'Quantidade ajustada para {nova_quantidade} na garagem {garage}.'})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
