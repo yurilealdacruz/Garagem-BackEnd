@@ -33,5 +33,6 @@ urlpatterns = [
     path('api/', include('polls.urls')),  # Certifique-se de que isso está correto
     path('', include(router.urls)),  # Inclua as rotas do roteador aqui
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    
 ] 
 

@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import get_object_or_404
+from datetime import datetime
 
 def index(request):
     return render(request, 'index.html')
@@ -76,5 +77,30 @@ def ajustar_quantidade(request, garage):
                 CarAction.objects.create(action='saida', garage=garage)
 
         return JsonResponse({'message': f'Quantidade ajustada para {nova_quantidade} na garagem {garage}.'})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
+    
+
+@csrf_exempt
+def historico_por_data(request, garagem, data_str):
+    try:
+        # Transforma '2024-06-08' em objeto datetime
+        data = datetime.strptime(data_str, '%Y-%m-%d').date()
+
+        # Filtra ações no mesmo dia e garagem
+        acoes = CarAction.objects.filter(
+            garage=garagem,
+            timestamp__date=data
+        ).order_by('timestamp')
+
+        resultado = [
+            {
+                'acao': acao.action,
+                'garagem': acao.get_garage_display(),
+                'horario': acao.timestamp.strftime('%H:%M:%S')
+            }
+            for acao in acoes
+        ]
+        return JsonResponse({'historico': resultado})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=400)
