@@ -86,7 +86,7 @@ def ajustar_quantidade(request, garage):
         senha = data.get('senha')
 
         # Verificação de credenciais
-        if usuario != 'isael' or senha != 'ah1_brujas_ah1':
+        if usuario != 'ddd' or senha != 'ddd':
             return JsonResponse({'error': 'Usuário ou senha inválidos.'}, status=403)
 
         if garage not in ['A', 'B']:
