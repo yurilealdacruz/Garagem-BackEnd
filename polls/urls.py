@@ -8,7 +8,8 @@ urlpatterns = [
     path('carros_na_garagem/<str:garage>/', views.carros_na_garagem, name='carros_na_garagem'),  # Ex: /carros_na_garagem/A/ ou /carros_na_garagem/B/
     path('limpar_dados/', views.limpar_dados, name='limpar_dados'),
     path('ajustar_quantidade/<str:garage>/', views.ajustar_quantidade, name='ajustar_quantidade'),
-    path('api/historico/<str:garagem>/<str:data_str>/', views.historico_por_data),
+    path('historico/<str:garagem>/<str:data_str>/', views.historico_por_data),
+
 
 
 ]
